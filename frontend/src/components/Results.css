@@ -1,0 +1,45 @@
+.results-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.results-list {
+  margin-top: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: white;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.party-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.vote-count {
+  color: #4a5568;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #4a5568;
+}
+
+.error {
+  color: #e53e3e;
+  padding: 2rem;
+  text-align: center;
+}
