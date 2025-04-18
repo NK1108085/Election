@@ -1,6 +1,6 @@
 # 🗳️ Online Voting System with Blockchain
 
-A secure and transparent digital voting platform leveraging blockchain technology for immutable vote recording.
+A secure and transparent digital voting platform leveraging blockchain technology .
 
 ![Screenshot 2025-04-08 225547](https://github.com/user-attachments/assets/3b18962b-6c3d-4025-9eaf-35e9beea331e)
 ![Screenshot 2025-04-08 225815](https://github.com/user-attachments/assets/53df9611-e354-4289-a3c8-ca518f887198)
