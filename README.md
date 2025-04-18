@@ -2,7 +2,7 @@
 
 A secure and transparent digital voting platform leveraging blockchain technology for immutable vote recording.
 
-![System Architecture](https://via.placeholder.com/800x400.png?text=System+Architecture+Diagram)
+![Screenshot 2025-04-08 225547](https://github.com/user-attachments/assets/3b18962b-6c3d-4025-9eaf-35e9beea331e)
 ![Screenshot 2025-04-08 225815](https://github.com/user-attachments/assets/53df9611-e354-4289-a3c8-ca518f887198)
 ![Screenshot 2025-04-08 225744](https://github.com/user-attachments/assets/fa533bac-64fb-440e-8b6f-c1109b2c7d3e)
 
