@@ -10,6 +10,14 @@ router.post('/register', async (req, res) => {
   try {
     const { email, voterId, mobile } = req.body;
     
+    // Validate mobile format
+    if (!/^\d{10}$/.test(mobile)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid mobile number format (10 digits required)'
+      });
+    }
+
     // Check existing user
     const existingUser = await User.findOne({
       $or: [
@@ -36,7 +44,23 @@ router.post('/register', async (req, res) => {
     });
 
     await newUser.save();
-    await sendOTP(mobile, otp);
+    
+    try {
+      const otpSent = await sendOTP(mobile, otp);
+      if (!otpSent) {
+        await User.deleteOne({ mobile });
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to send OTP'
+        });
+      }
+    } catch (otpError) {
+      await User.deleteOne({ mobile });
+      return res.status(500).json({
+        success: false,
+        error: 'OTP service unavailable. Please try again later.'
+      });
+    }
 
     res.status(201).json({ 
       success: true,
@@ -99,7 +123,21 @@ router.post('/resend-otp', async (req, res) => {
     user.otp = otp;
     user.otpExpiry = expiry;
     await user.save();
-    await sendOTP(mobile, otp);
+    
+    try {
+      const otpSent = await sendOTP(mobile, otp);
+      if (!otpSent) {
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to resend OTP'
+        });
+      }
+    } catch (otpError) {
+      return res.status(500).json({
+        success: false,
+        error: 'OTP service unavailable. Please try again later.'
+      });
+    }
 
     res.json({ 
       success: true,
@@ -116,11 +154,9 @@ router.post('/resend-otp', async (req, res) => {
 // Login User
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login request body:', req.body);
     const { voterId, password } = req.body;
     
     if (!voterId || !password) {
-      console.log('Missing credentials');
       return res.status(400).json({ 
         success: false,
         error: 'Voter ID and password are required' 
@@ -130,39 +166,31 @@ router.post('/login', async (req, res) => {
     const cleanVoterId = voterId.toString().trim().toUpperCase();
     const cleanPassword = password.toString().trim();
 
-    console.log(`Searching for user: ${cleanVoterId}`);
     const user = await User.findOne({ voterId: cleanVoterId })
                          .select('+password')
                          .lean();
 
     if (!user) {
-      console.log('User not found');
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
       });
     }
-
-    console.log('User found:', user);
-    console.log('Stored password hash:', user.password);
 
     const isMatch = await bcrypt.compare(cleanPassword, user.password);
     if (!isMatch) {
-      console.log('Password mismatch');
       return res.status(401).json({
         success: false,
         error: 'Invalid credentials'
       });
     }
 
-    console.log('Password matched');
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    console.log('Generated token:', token);
     res.json({
       success: true,
       token,
@@ -175,7 +203,6 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Login error:', err.stack); // Detailed error logging
     res.status(500).json({
       success: false,
       error: 'Internal server error'
